@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -qqy git unzip libfreetype6-dev \
         libpng-dev \
         libaio1 wget && apt-get clean autoclean && apt-get autoremove --yes &&  rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-RUN docker-php-ext-install pdo pdo_mysql \
+RUN docker-php-ext-install mysqli pdo pdo_mysql \
         && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
         && docker-php-ext-configure gd --with-freetype --with-jpeg \
         && pecl install redis-5.1.1 \
@@ -17,6 +17,11 @@ RUN docker-php-ext-install pdo pdo_mysql \
         && apt-get install -y libmemcached-dev zlib1g-dev \
         && pecl install memcached \
         && docker-php-ext-enable memcached redis
+
+RUN apt-get install -y build-essential libssl-dev zlib1g-dev libpng-dev libjpeg-dev libfreetype6-dev
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd
+
 
 
 #composer
@@ -48,5 +53,4 @@ RUN echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8 \
                pdo_oci
 RUN mkdir -p /var/www/html
 
-ADD etc/php-fpm.d/www.conf /usr/loca/etc/php-fpm.d/www.conf
 WORKDIR /var/www/html
